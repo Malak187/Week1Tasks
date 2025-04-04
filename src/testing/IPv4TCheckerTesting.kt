@@ -108,7 +108,7 @@ fun main() {
     testIP(
         name = "When the IP address segments are separated by spaces it should return false",
         result = checkIP(
-            "162 234 121 2."
+            "162 234 121 2"
         ),
         correctResult = false
     )
