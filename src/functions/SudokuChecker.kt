@@ -7,9 +7,8 @@ fun main() {
 }
 
 fun checkSudokuGrid(sudokuGrid: List<List<String>>): Boolean {
-    return (checkGridSize(sudokuGrid) &&
-            checkRowConflicts(sudokuGrid)
-            && checkColumnConflicts(sudokuGrid)
+    return (checkGridSize(sudokuGrid)
+            && checkRowAndColumnConflicts(sudokuGrid)
             && checkSubGridConflicts(sudokuGrid))
 }
 
@@ -17,42 +16,31 @@ fun checkGridSize(sudokuGrid: List<List<String>>): Boolean {
     return sudokuGrid.size == sudokuGrid[0].size
 }
 
-fun checkRowConflicts(sudokuGrid: List<List<String>>): Boolean {
+fun checkRowAndColumnConflicts(sudokuGrid: List<List<String>>): Boolean {
     for (i in 0..<sudokuGrid[0].size) {
-        val seenValues = mutableListOf<String>()
+        val seenRowValues = mutableListOf<String>()
+        val seenColValues = mutableListOf<String>()
+
         for (j in 0..<sudokuGrid[0].size) {
-            if (sudokuGrid[i][j] == "-") {
-                continue
+            val rowCell = sudokuGrid[i][j]
+            val colCell = sudokuGrid[j][i]
+            if (rowCell != "-") {
+                val rowInt = rowCell.toIntOrNull()
+                if (rowCell in seenRowValues || rowInt == null || rowInt !in 1..sudokuGrid[0].size) return false
+                seenRowValues.add(rowCell)
             }
-            val sudokuCell = sudokuGrid[i][j].toIntOrNull()
-            if (sudokuGrid[i][j] in seenValues || sudokuCell == null || sudokuCell !in (1..sudokuGrid.size)) {
-                return false
+
+            if (colCell != "-") {
+                val colInt = colCell.toIntOrNull()
+                if (colCell in seenColValues || colInt == null || colInt !in 1..sudokuGrid[0].size) return false
+                seenColValues.add(colCell)
             }
-            seenValues.add(sudokuGrid[i][j])
         }
     }
     return true
 }
 
-// check for negative values
-fun checkColumnConflicts(sudokuGrid: List<List<String>>): Boolean {
-    for (i in 0..<sudokuGrid[0].size) {
-        val seenValues = mutableListOf<String>()
-        for (j in 0..<sudokuGrid[0].size) {
-            if (sudokuGrid[j][i] == "-") {
-                continue
-            }
-            val sudokuCell = sudokuGrid[j][i].toIntOrNull()
-            if (sudokuGrid[j][i] in seenValues || sudokuCell == null || sudokuCell !in (1..sudokuGrid.size)) {
-                return false
-            }
-            seenValues.add(sudokuGrid[j][i])
-        }
-    }
-    return true
-}
 
-//simplify to 2 functions
 fun checkSubGridConflicts(sudokuGrid: List<List<String>>): Boolean {
     for (i in sudokuGrid.indices step sqrt(sudokuGrid.size.toDouble()).toInt()) {
         for (j in sudokuGrid.indices step sqrt(sudokuGrid.size.toDouble()).toInt()) {
